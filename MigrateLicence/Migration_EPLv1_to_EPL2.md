@@ -65,27 +65,6 @@ Standard header:
 ```
 find . -type f -iname "*.*" | awk '{printf("\"%s\"\n",$0)}' | xargs grep -l "epl-v1"
 ```
- 
-### Docgen
-
-Bug: 568919
-[568919] 
-
-### Introspector
-
-Bug: 568997
-
-### Capella-Studio
-
-Bug: 569054
-
-### Kitalpha
-
-Bug: 569166
-
-## At the end:
-
-Check that "Eclipse Public License v1.0" and "epl-v10" cannot be found on the repository
 
 ## Update html files
 
@@ -115,52 +94,13 @@ Copy aboutv2.html
 find . -iname "about.html" -printf "\"%P\"" -exec grep -q 'Eclipse Public License Version 1.0' {} \; -exec cp aboutv2.html {} \;
 ```
 
-### Commit message
-```
-[XXXX] Update html files
-
-- epl-v10.html -> epl-2.0.html
-- license.html
-- about.html
-```
-
 ## Copy LICENSE.md
 
 Copy LICENSE.md at project root
 
-### Commit message
-
-```
-[XXXX] Add LICENSE.md
-```
-
 ## *.properties
 
 ### headers
-
-replace:
-```
-^((\s)*)#((\s)*)All rights reserved.((\s)*)This program and the accompanying materials(\r)?\n((\s)*)#((\s)*)are made available under the terms of the Eclipse Public License v1.0(\r)?\n((\s)*)#((\s)*)which accompanies this distribution, and is available at(\r)?\n((\s)*)#((\s)*)http://www.eclipse.org/legal/epl-v10.html
-```
-
-with:
-```
-\1#\3This program and the accompanying materials are made available under the\7\n\1#\3terms of the Eclipse Public License 2.0 which is available at\7\n\1#\3http://www.eclipse.org/legal/epl-2.0\7\n\1#\7\n\1#\3SPDX-License-Identifier: EPL-2.0
-```
-
-and
-
-replace:
-```
-^((\s)*)#((\s)*)\*((\s)*)All rights reserved.((\s)*)This program and the accompanying materials(\r)?\n((\s)*)#((\s)*)\*((\s)*)are made available under the terms of the Eclipse Public License v1.0(\r)?\n((\s)*)#((\s)*)\*((\s)*)which accompanies this distribution, and is available at(\r)?\n((\s)*)#((\s)*)\*((\s)*)http://www.eclipse.org/legal/epl-v10.html
-```
-
-with:
-```
-\1#\3\*\5This program and the accompanying materials are made available under the\9\n\1#\3\*\5terms of the Eclipse Public License 2.0 which is available at\9\n\1#\3\*\5http://www.eclipse.org/legal/epl-2.0\9\n\1#\9\n\1#\3\*\5SPDX-License-Identifier: EPL-2.0
-```
-
-#### to test:
 
 replace:
 ```
@@ -169,7 +109,7 @@ replace:
 
 with:
 ```
-\1This program and the accompanying materials are made available under the\3\n\1terms of the Eclipse Public License 2.0 which is available at\3\n\1http://www.eclipse.org/legal/epl-2.0\3\n\3\n\1SPDX-License-Identifier: EPL-2.0
+\1This program and the accompanying materials are made available under the\3\n\1terms of the Eclipse Public License 2.0 which is available at\3\n\1http://www.eclipse.org/legal/epl-2.0\3\n\1\3\n\1SPDX-License-Identifier: EPL-2.0
 ```
 
 ### build.properties
@@ -193,7 +133,7 @@ find . -type f -iname 'build.properties' -printf "\"%P\"\n" | xargs grep -l "fea
 
 ##### Add epl-2.0.html at the end:
 
-perl -0777 -i.bak -pe 's/((.*(\r)?(\n))*)((.*)(\r)?(\n))/$1$6,\\$7$8epl-2.0.html$7$8/gm' "architecture description/core/features/org.polarsys.kitalpha.ad.integration.amalgam.feature/build.properties"
+perl -0777 -i.bak -pe 's/((.*(\r)?(\n))*)((.*)(\r)?(\n))/$1$6,\\$7$8epl-2.0.html$7$8/gm' "<build.properties file path>"
 
 ### feature.properties
 
@@ -209,7 +149,14 @@ with:
 \\n\\\3\n\1This program and the accompanying materials are made available under the\\n\\\3\n\1terms of the Eclipse Public License 2.0 which is available at\\n\\\3\n\1http://www.eclipse.org/legal/epl-2.0\\n\\\3\n\\n\\\3\n\1SPDX-License-Identifier: EPL-2.0
 ```
 
-#### license
+Copy feature.properties.copyright.raw to root folder
+Encode feature.properties.copyright.raw line endings to the same line endings as the feature.properties files
+
+```
+find . -type f -iname 'feature.properties' -exec perl -0777 -i.bak -pe 'BEGIN {local $/; open(my $f, "<", "feature.properties.copyright.raw"); $d = <$f>}; s/^copyright=\[Enter Copyright Description here\.\]/$d/gm' "{}" +;
+```
+
+#### licence
 
 Copy feature.properties.license.raw to root folder
 Encode feature.properties.license.raw line endings to the same line endings as the feature.properties files
@@ -218,19 +165,15 @@ Encode feature.properties.license.raw line endings to the same line endings as t
 find . -type f -iname 'feature.properties' -exec perl -0777 -i.bak -pe 'BEGIN {local $/; open(my $f, "<", "feature.properties.license.raw"); $d = <$f>}; s/^license=\\(\r)?\n(.*(\r)?(\n)?)*########### end of license property ##########################################/$d/gm' "{}" +;
 ```
 
-### Commit message
-
 ```
-[XXXX] Update properties files
-
-- Copyright headers values on build.properties, bundle.properties, feature.properties and messages.properties
-- Copyright value in feature.properties
-- License value in feature.properties
+find . -type f -iname 'feature.properties' -exec perl -0777 -i.bak -pe 'BEGIN {local $/; open(my $f, "<", "feature.properties.license.raw"); $d = <$f>}; s/^license=\[Enter License Description here\.\]/$d/gm' "{}" +;
 ```
 
 ## *.xml, *.fcore, *.exsd, *.genmodel
 
-find . -type f \( -iname '*.xml' -o -iname '*.fcore' -o -iname '*.exsd' -o -iname '*.genmodel' \) | awk '{printf "\"%s\"\n", $0}' | xargs grep "epl-v10"
+```
+find . -type f \( -iname '*.xml' -o -iname '*.fcore' -o -iname '*.exsd' -o -iname '*.genmodel' \) | awk '{printf "\"%s\"\n", $0}' | xargs grep "epl-v10" | awk '{printf "\"%s\"\n", $0}' | xargs grep -L "epl-2"
+```
 
 ### header
 
@@ -262,17 +205,6 @@ with:
 \1<name>Eclipse Public License v2.0</name>\3\n\4<comments>\3\n\7This program and the accompanying materials are made available under the\3\n\7terms of the Eclipse Public License 2.0 which is available at\3\n\7http://www.eclipse.org/legal/epl-2.0\3\n\3\n\7SPDX-License-Identifier: EPL-2.0\3\n\4</comments>
 ```
 
-### Commit message
-
-```
-[XXXX] Update xml files
-
-- Copyright
-- exsd files content
-- fcore files content
-(- license in pom.xml)???
-```
-
 ## *.java, *.css, *.targetplatform, *.pt, *.xtend
 
 ### all java files that are not generated:
@@ -283,33 +215,13 @@ find . -type f -not -wholename '**/generated/**.java' -iname '*.java' | awk '{pr
 
 replace:
 ```
-^((\s)*)\*((\s)*)All rights reserved.((\s)*)This program and the accompanying materials(\r)?\n((\s)*)\*((\s)*)are made available under the terms of the Eclipse Public License v1.0(\r)?\n((\s)*)\*((\s)*)which accompanies this distribution, and is available at(\r)?\n((\s)*)\*((\s)*)http://www.eclipse.org/legal/epl-v10.html
-```
-
-```
 ^(.*)All rights reserved.((\s)*)This program and the accompanying materials((\s)*)(\r)?\n(.*)are made available under the terms of the Eclipse Public License v1.0((\s)*)(\r)?\n(.*)which accompanies this distribution, and is available at((\s)*)(\r)?\n(.*)http://www.eclipse.org/legal/epl-v10.html
 ```
 
 with:
-```
-\1\*\3This program and the accompanying materials are made available under the\5\n\1\*\3terms of the Eclipse Public License 2.0 which is available at\5\n\1\*\3http://www.eclipse.org/legal/epl-2.0\5\n\1\*\5\n\1\*\3SPDX-License-Identifier: EPL-2.0
-```
 
 ```
 \1This program and the accompanying materials are made available under the\6\n\1terms of the Eclipse Public License 2.0 which is available at\6\n\1http://www.eclipse.org/legal/epl-2.0\6\n\1\6\n\1SPDX-License-Identifier: EPL-2.0
-```
-
-### Commit message
-
-```
-[XXXX] Update source files
-
-- Java copyrights
-- CSS copyrights
-- targetplatform copyrights
-- EGF Patterns copyrights
-- EGF Generated files update
-- XTend files sources and generated files
 ```
 
 ## EMF generation content
@@ -347,17 +259,7 @@ replace:
 
 with:
 ```
-This program and the accompanying materials are made available under the\1\n\3terms of the Eclipse Public License 2.0 which is available at\1\n\3http://www.eclipse.org/legal/epl-2.0\1\n\1\n\3SPDX-License-Identifier: EPL-2.0
-```
-
-### Commit message
-
-```
-[XXXX] EMF source and generated files
-
-- Java
-- genmodel
-- icons txt files
+These followings icons are made available under the terms of the Eclipse Public License 2.0\1\n\3which accompanies this distribution, and is available at\1\n\3http://www.eclipse.org/legal/epl-2.0\1\n\1\n\3SPDX-License-Identifier: EPL-2.0
 ```
 
 ## Product and scripts
@@ -408,12 +310,6 @@ with:
 Eclipse Public License 2.0\3\n\3\n\5This program and the accompanying materials are made available under the\3\n\5terms of the Eclipse Public License 2.0 which is available at\3\n\5http://www.eclipse.org/legal/epl-2.0\3\n\3\n\5SPDX-License-Identifier: EPL-2.0
 ```
 
-### Commit message
-
-```
-[XXXX] Update product and scripts
-```
-
 ## Update copyright year
 
 list all files modified between HEAD and commit:
@@ -433,12 +329,6 @@ git diff-tree --no-commit-id --name-only -r HEAD..d33fd05 | awk '{printf "\"%s\"
 // Update XXXX year to XXXX, 2020
 ```
 git diff-tree --no-commit-id --name-only -r HEAD..d33fd05 | awk '{printf "\"%s\"\n", $0}' | xargs perl -0777 -i.bak -pe 's/^(.*)Copyright \(c\) (?<test>(?!2020)\d{4})? (.*)$/\1Copyright (c) \2, 2020 \3/gm'
-```
-
-### Commit message
-
-```
-[XXXX] Update copyright year on all modified files
 ```
 
 ## Clean all .bak files
@@ -465,9 +355,8 @@ git diff-tree --no-commit-id --name-only -r HEAD..75809d2 | awk '{printf "\"%s\"
 find . -iname "*.zip" -exec git ls-files "{}" \;
 ```
 
-## Projets:
+## Find all faulty "provider/vendor name" in plugins and features
 
-### Kitalpha Addons
-
-133 "Eclipse Public License v1.0" and 178 "epl-v10"
-
+```
+ find . -iname "feature.properties" -o -iname "plugin.properties" | awk '{printf ("\"%s\"\n", $0)}' | xargs grep -E -L "(providerName|providerVendor|Bundle-provider|bundle.vendor|BundleVendor|Feature-Vendor|Bundle-Vendor|pluginVendor)[[:space:]]*=[[:space:]]*(www.polarsys.org|Eclipse.org|Polarsys.org|Obeo)" |  awk '{printf ("\"%s\"\n", $0)}'
+```

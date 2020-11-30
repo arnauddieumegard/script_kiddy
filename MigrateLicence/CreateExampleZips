@@ -1,5 +1,5 @@
 # Processing (from the root of the Kitalpha repository).
-# cat CreateExampleZips | sed '/^#.*$/d' | awk -v pwd=$PWD '{printf("cd %s; zip %s %s; mv %s \"%s\"; cd \"%s\"; mv %s %s\n", $3, $2, $4, $2, pwd, pwd, $2, $1)}' | awk '{system($0)}'
+# cat CreateExampleZips | sed '/^#.*$/d' | awk -v pwd=$PWD '{printf("cd %s; cd %s; rm -rf bin/; rm -rf target/; cd \.\.; zip -r %s %s; mv %s \"%s\"; cd \"%s\"; mv %s %s\n", $3, $4, $2, $4, $2, pwd, pwd, $2, $1)}' | awk '{system($0)}'
 #
 # <Target folder>    <Target zip file name>    <Source folder>    <Target zip file content taken from Source folder>
 #
